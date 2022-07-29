@@ -12,18 +12,14 @@ const Jimp = require('jimp');
 
 //var os = require("os"); // Solo si se usa localhost
 //const hostname = os.hostname();
-const hostname = '192.168.157.111';
-//const hostname = '192.168.0.30';
+const hostname = '192.168.0.30';
 const port = 3000;
-
-//var get_acc = 'NoData'
 
 // Wait for rosnodejs to init the ROS node
 rosnodejs.initNode('rosnodejs_interface_node', { onTheFly: true })
 .then((nh) => {
 
   // Load required ROS packages
-  //rosnodejs.loadAllPackages();
   const std_msgs = rosnodejs.require('std_msgs');
   const geometry_msgs = rosnodejs.require('geometry_msgs');
   const ackermann_msgs = rosnodejs.require('ackermann_msgs');
@@ -76,7 +72,7 @@ rosnodejs.initNode('rosnodejs_interface_node', { onTheFly: true })
         odom_to_coord_client.call({x: msg.pose.pose.position.x, y: msg.pose.pose.position.y, gnss_lat: gnss_lat, gnss_lon: gnss_lon})
         .then((resp) => { 
           //console.log('Lat: %d\tLon: %d', resp.lat, resp.lon);
-          io.volatile.emit('rob:pose', {lat: resp.lat, lon: resp.lon}); //io.volatile.emit ??????
+          io.volatile.emit('rob:pose', {lat: resp.lat, lon: resp.lon});
         })
         .catch(err => console.error(err));
 
@@ -98,7 +94,7 @@ rosnodejs.initNode('rosnodejs_interface_node', { onTheFly: true })
         odom_to_coord_client.call({x: position_msg.pose.pose.position.x, y: position_msg.pose.pose.position.y, gnss_lat: gnss_lat, gnss_lon: gnss_lon})
         .then((resp) => { 
           //console.log('Lat: %d\tLon: %d', resp.lat, resp.lon);
-          io.volatile.emit('rob:pose', {lat: resp.lat, lon: resp.lon}); //io.volatile.emit ??????
+          io.volatile.emit('rob:pose', {lat: resp.lat, lon: resp.lon});
         })
         .catch(err => console.error(err));
 
@@ -130,32 +126,6 @@ rosnodejs.initNode('rosnodejs_interface_node', { onTheFly: true })
     
   });
   
-  /*
-  // Get camera1 depth image
-  const sub_cam_deepth1 = nh.subscribe('/camera1/aligned_depth_to_color/image_raw', 'sensor_msgs/Image', (msg) => {
-    
-    console.log('Got img: %j', msg.data);
-    
-    //if (cam1_on){
-      new Jimp({
-        width: msg.width,
-        height: msg.height,
-        data: Buffer.from(msg.data)
-      }, (err, image) => {
-        console.log('Error: %j', err);
-        //image.write('output.png');
-        //image.resize(200, Jimp.AUTO)
-        //image.getBase64Async(Jimp.AUTO)
-        //.then(base64 => {
-          //io.volatile.emit('cam0', base64);
-        //});
-      });
-    //}
-    
-
-  });
-  */
-  
   // Get camera2 RGB image
   const sub_cam_RGB2 = nh.subscribe('/camera2/color/image_raw', 'sensor_msgs/Image', (msg) => {
     
@@ -174,27 +144,6 @@ rosnodejs.initNode('rosnodejs_interface_node', { onTheFly: true })
     }
 
   });
-  
-  /*
-  // Get camera2 depth image
-  const sub_cam_deepth2 = nh.subscribe('/camera2/aligned_depth_to_color/image_raw', 'sensor_msgs/Image', (msg) => {
-    
-    if (cam2_on){
-      new Jimp({
-        width: msg.width,
-        height: msg.height,
-        data: Buffer.from(msg.data)
-      }, (err, image) => {
-        image.resize(200, Jimp.AUTO)
-        image.getBase64Async(Jimp.AUTO)
-        .then(base64 => {
-          io.volatile.emit('cam1', base64);
-        });
-      });
-    }
-
-  });
-  */
 
   // Get pointCloud image
   const sub_cam_pointcloud = nh.subscribe('/pointCloud_image', 'sensor_msgs/Image', (msg) => {
@@ -255,7 +204,6 @@ rosnodejs.initNode('rosnodejs_interface_node', { onTheFly: true })
       // Start navigation
       navStart_pub.publish(position_msg);
       
-
     });
     
     // Movement control
@@ -274,7 +222,7 @@ rosnodejs.initNode('rosnodejs_interface_node', { onTheFly: true })
     // Arm control
     socket.on("arm", (arg) => {
 
-      console.log('Arm: ', arg);
+        console.log('Arm: ', arg);
 
     });
 
@@ -304,7 +252,6 @@ rosnodejs.initNode('rosnodejs_interface_node', { onTheFly: true })
     socket.on("lidar", (arg) => {
       
       //console.log('Recived pointCloud configuration: ', arg);
-
       pcConfig_pub.publish({height: 1080, width: 1080, radial: arg[2], polar: arg[0]*Math.PI/180, azimuth: arg[1]*Math.PI/180});
 
     });
